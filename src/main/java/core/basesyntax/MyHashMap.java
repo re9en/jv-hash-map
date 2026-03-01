@@ -2,7 +2,7 @@ package core.basesyntax;
 
 public class MyHashMap<K, V> implements MyMap<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
-    private static final int DOUBLE_CAPACITY = 1;
+    private static final int RESIZE_MULTIPLIER = 2;
     private static final int HASH_MASK = 0x7fffffff;
     private int size;
     private Node<K, V>[] table = new Node[DEFAULT_CAPACITY];
@@ -65,9 +65,9 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     private void resize() {
         final Node<K, V>[] oldTable = table;
-        capacity = capacity << DOUBLE_CAPACITY;
+        capacity = capacity * RESIZE_MULTIPLIER;
 
-        Node<K, V>[] newTable = new Node[capacity];
+        Node<K, V>[] newTable = (Node<K, V>[]) new Node[capacity];
         table = newTable;
         size = 0;
 
@@ -88,7 +88,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         private V value;
         private Node<K, V> next;
 
-        public Node(int hash, K key, V value, Node<K, V> next) {
+        Node(int hash, K key, V value, Node<K, V> next) {
             this.hash = hash;
             this.key = key;
             this.value = value;
