@@ -2,8 +2,10 @@ package core.basesyntax;
 
 public class MyHashMap<K, V> implements MyMap<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
+    private static final int DOUBLE_CAPACITY = 1;
+    private static final int HASH_MASK = 0x7fffffff;
     private int size;
-    private Node[] table = new Node[DEFAULT_CAPACITY];
+    private Node<K, V>[] table = new Node[DEFAULT_CAPACITY];
     private int capacity = DEFAULT_CAPACITY;
     private final double loadFactor = 0.75;
 
@@ -16,7 +18,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             resize();
         }
 
-        int index = (hash & 0x7fffffff) % capacity;
+        int index = (hash & HASH_MASK) % capacity;
 
         if (table[index] == null) {
             table[index] = node;
@@ -44,7 +46,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     @Override
     public V getValue(K key) {
         int hash = (key == null) ? 0 : key.hashCode();
-        int index = (hash & 0x7fffffff) % capacity;
+        int index = (hash & HASH_MASK) % capacity;
         Node<K, V> curr = table[index];
         while (curr != null) {
             if (key == null ? curr.key == null : key.equals(curr.key)) {
@@ -63,7 +65,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     private void resize() {
         final Node<K, V>[] oldTable = table;
-        capacity = capacity << 1;
+        capacity = capacity << DOUBLE_CAPACITY;
 
         Node<K, V>[] newTable = new Node[capacity];
         table = newTable;
@@ -80,7 +82,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         }
     }
 
-    public static class Node<K, V> {
+    private static class Node<K, V> {
         private final int hash;
         private final K key;
         private V value;
